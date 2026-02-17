@@ -10,14 +10,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.loyalty.auth.entity.Privilege;
 import com.loyalty.auth.entity.Role;
 import com.loyalty.auth.entity.RolePrivilege;
 import com.loyalty.auth.entity.User;
 import com.loyalty.auth.entity.UserRole;
-import com.loyalty.auth.repository.PrivilegeRepository;
 import com.loyalty.auth.repository.RolePrivilegeRepository;
-import com.loyalty.auth.repository.RoleRepository;
 import com.loyalty.auth.repository.UserRepository;
 import com.loyalty.auth.repository.UserRoleRepository;
 
@@ -29,32 +26,37 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final UserRoleRepository userRoleRepository;
-    private final RoleRepository roleRepository;
     private final RolePrivilegeRepository rolePrivilegeRepository;
-    private final PrivilegeRepository privilegeRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) {
+    public UserDetails loadUserByUsername(String username)
+            throws UsernameNotFoundException {
 
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() ->
+                        new UsernameNotFoundException("User not found"));
 
-        List<UserRole> userRoles = userRoleRepository.findByUserId(user.getId());
+        List<UserRole> userRoles =
+                userRoleRepository.findByUserId(user.getId());
 
         List<GrantedAuthority> authorities = new ArrayList<>();
 
         for (UserRole ur : userRoles) {
-            Role role = roleRepository.findById(ur.getRoleId()).orElseThrow();
-            authorities.add(new SimpleGrantedAuthority(role.getRoleName()));
 
-            List<RolePrivilege> rolePrivileges =
+            Role role = ur.getRole();
+            authorities.add(
+                    new SimpleGrantedAuthority(role.getRoleName())
+            );
+
+            List<RolePrivilege> rps =
                     rolePrivilegeRepository.findByRoleId(role.getId());
 
-            for (RolePrivilege rp : rolePrivileges) {
-                Privilege privilege =
-                        privilegeRepository.findById(rp.getPrivilegeId()).orElseThrow();
+            for (RolePrivilege rp : rps) {
                 authorities.add(
-                        new SimpleGrantedAuthority(privilege.getPrivilegeName()));
+                        new SimpleGrantedAuthority(
+                                rp.getPrivilege().getPrivilegeName()
+                        )
+                );
             }
         }
 

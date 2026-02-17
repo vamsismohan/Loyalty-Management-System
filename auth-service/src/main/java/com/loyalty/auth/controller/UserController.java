@@ -5,21 +5,21 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.loyalty.auth.dto.LoginRequest;
-import com.loyalty.auth.dto.LoginResponse;
-import com.loyalty.auth.service.AuthService;
+import com.loyalty.auth.dto.CreateUserRequest;
+import com.loyalty.auth.entity.User;
+import com.loyalty.auth.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/auth/users")
 @RequiredArgsConstructor
-public class AuthController {
+public class UserController {
 
-    private final AuthService authService;
+    private final UserService userService;
 
-    @PostMapping("/login")
-    public LoginResponse login(@RequestBody LoginRequest request) {
-        return authService.login(request);
+    @PostMapping
+    public User createUser(@RequestBody CreateUserRequest request) {
+        return userService.createUser(request);
     }
 }

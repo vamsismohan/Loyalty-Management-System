@@ -15,8 +15,7 @@ import java.util.List;
 @Component
 public class JwtUtil {
 
-    private final String SECRET =
-            "supersecretkeysupersecretkey123456";
+    private final String SECRET = "supersecretkeysupersecretkey123456";
 
     private Key getKey() {
         return Keys.hmacShaKeyFor(SECRET.getBytes());

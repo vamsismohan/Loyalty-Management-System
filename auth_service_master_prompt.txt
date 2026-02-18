@@ -1,0 +1,97 @@
+AUTH SERVICE MASTER PROMPT – SPRING BOOT 3.2.x (JAVA 17)
+
+I want to build a production-style Authentication Service using Spring
+Boot 3.2.x and Java 17. This service is part of a microservices-based
+Airline Loyalty Management System.
+
+Please generate a complete working project with the following
+requirements:
+
+1)  ARCHITECTURE Use layered architecture:
+
+-   controller
+-   service
+-   repository
+-   entity
+-   dto
+-   security
+-   config
+-   exception Use constructor injection only. No field injection.
+
+2)  DATABASE Use PostgreSQL with database-per-service pattern. Tables
+    must be exactly: users roles privileges user_roles role_privileges
+    Always use explicit @Table(name=“…”) annotations. Do NOT rely on
+    default naming.
+
+3)  ENTITIES User: id, username, email, password, status, createdAt
+    Role: id, roleName Privilege: id, privilegeName UserRole: id, user
+    (ManyToOne), role (ManyToOne) RolePrivilege: id, role (ManyToOne),
+    privilege (ManyToOne) Use proper JPA relationships and mappings.
+
+4)  SECURITY (SPRING SECURITY 6 COMPATIBLE)
+
+-   Spring Boot 3.2.x
+-   No WebSecurityConfigurerAdapter
+-   Use SecurityFilterChain
+-   Stateless session
+-   BCryptPasswordEncoder
+-   DaoAuthenticationProvider
+-   CustomUserDetailsService
+-   Expose AuthenticationManager using AuthenticationConfiguration
+    Security rules:
+-   /auth/login -> permitAll
+-   All other endpoints -> authenticated
+
+5)  AUTHENTICATION FLOW POST /auth/login Request: { “username”: “admin”,
+    “password”: “admin123” } Flow:
+
+-   Use AuthenticationManager
+-   Validate using CustomUserDetailsService
+-   Compare password using BCrypt
+-   Generate JWT
+-   Return token in response
+
+6)  JWT REQUIREMENTS
+
+-   Use jjwt 0.11.5
+-   HS256 algorithm
+-   Secret key must be at least 256-bit
+-   Configurable expiration
+-   Include username and roles in claims Create JwtUtil with:
+-   generateToken
+-   validateToken
+-   extractUsername
+
+7)  PASSWORD HANDLING
+
+-   Store passwords encrypted using BCrypt
+-   Never store plain text
+-   Provide example seed user with encoded password
+
+8)  CONFIGURATION application.yml must contain:
+
+-   PostgreSQL config
+-   JPA show-sql
+-   JWT secret
+-   JWT expiration
+
+9)  DOCKER SUPPORT Provide Dockerfile with multi-stage build: Stage 1:
+    maven:3.9.6-eclipse-temurin-17 Stage 2:
+    eclipse-temurin:17-jdk-alpine
+
+10) PRODUCTION RULES
+
+-   No deprecated APIs
+-   No SNAPSHOT dependencies
+-   Spring Boot 3.2.5
+-   Java 17
+-   GlobalExceptionHandler
+-   Code must compile without errors
+
+Generate: - Complete project structure - All core classes -
+SecurityConfig - AuthController - AuthService -
+CustomUserDetailsService - JwtUtil - Entities - Repositories - DTOs -
+application.yml - Dockerfile - SQL seed script
+
+The project must run successfully with mvn clean package and docker
+build.

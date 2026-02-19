@@ -1,0 +1,107 @@
+package com.loyalty.customer_service.service;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.springframework.stereotype.Service;
+
+import com.loyalty.customer_service.dto.AddressRequest;
+import com.loyalty.customer_service.dto.CustomerRequest;
+import com.loyalty.customer_service.dto.CustomerResponse;
+import com.loyalty.customer_service.entity.Customer;
+import com.loyalty.customer_service.entity.CustomerAddress;
+import com.loyalty.customer_service.exception.CustomerAlreadyExistsException;
+import com.loyalty.customer_service.exception.CustomerNotFoundException;
+import com.loyalty.customer_service.repository.CustomerRepository;
+
+@Service
+public class CustomerServiceImpl implements CustomerService {
+
+    private CustomerRepository repository;
+
+    public CustomerServiceImpl(CustomerRepository customerRepository) {
+        this.repository = customerRepository;
+    }
+
+    @Override
+    public CustomerResponse createCustomer(CustomerRequest request) {
+
+        Optional<Customer> existing = repository.findByEmail(request.getEmail());
+        if (existing.isPresent()) {
+            throw new CustomerAlreadyExistsException(request.getEmail());
+        }
+
+        Customer customer = new Customer();
+        customer.setCustomerNumber(generateCustomerNumber());
+        customer.setFirstName(request.getFirstName());
+        customer.setLastName(request.getLastName());
+        customer.setEmail(request.getEmail());
+        customer.setPhone(request.getPhone());
+        customer.setDob(request.getDob());
+        customer.setCountry(request.getCountry());
+        customer.setStatus("ACTIVE");
+        customer.setCreatedAt(LocalDateTime.now());
+
+        repository.save(customer);
+
+        return mapToResponse(customer);
+    }
+
+    @Override
+    public CustomerResponse getCustomer(String customerNumber) {
+        Customer customer = repository.findById(customerNumber)
+                .orElseThrow(() -> new CustomerNotFoundException(customerNumber));
+
+        return mapToResponse(customer);
+    }
+
+    @Override
+    public CustomerResponse updateCustomer(String customerNumber,
+            CustomerRequest request) {
+
+        Customer customer = repository.findById(customerNumber)
+                .orElseThrow(() -> new CustomerNotFoundException(customerNumber));
+
+        customer.setFirstName(request.getFirstName());
+        customer.setLastName(request.getLastName());
+        customer.setPhone(request.getPhone());
+        customer.setCountry(request.getCountry());
+
+        // Update addresses
+        customer.getAddresses().clear();
+
+        if (request.getAddresses() != null) {
+            for (AddressRequest addrReq : request.getAddresses()) {
+                CustomerAddress address = new CustomerAddress();
+                address.setAddressLine(addrReq.getAddressLine());
+                address.setCity(addrReq.getCity());
+                address.setCountry(addrReq.getCountry());
+                address.setPostalCode(addrReq.getPostalCode());
+                address.setCreatedAt(LocalDateTime.now());
+                address.setCustomer(customer);
+
+                customer.getAddresses().add(address);
+            }
+        }
+
+        repository.save(customer);
+
+        return mapToResponse(customer);
+    }
+
+    private CustomerResponse mapToResponse(Customer customer) {
+        CustomerResponse response = new CustomerResponse();
+        response.setCustomerNumber(customer.getCustomerNumber());
+        response.setFirstName(customer.getFirstName());
+        response.setLastName(customer.getLastName());
+        response.setEmail(customer.getEmail());
+        response.setStatus(customer.getStatus());
+        return response;
+    }
+
+    private String generateCustomerNumber() {
+        return "CUST-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+    }
+
+}

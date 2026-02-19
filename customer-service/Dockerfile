@@ -8,6 +8,6 @@ RUN mvn clean package -DskipTests
 # Stage 2: Run
 FROM eclipse-temurin:17-jdk-alpine
 WORKDIR /app
-COPY --from=builder /app/target/auth-service-0.0.1-SNAPSHOT.jar app.jar
-EXPOSE 8082
+COPY --from=builder /app/target/customer-service-0.0.1-SNAPSHOT.jar app.jar
+EXPOSE 8083
 ENTRYPOINT ["java","-jar","app.jar"]

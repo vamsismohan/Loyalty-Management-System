@@ -1,4 +1,4 @@
-package com.loyalty.auth.dto;
+package com.loyalty.customer_service.dto;
 
 import java.time.LocalDateTime;
 
@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class ErrorResponse {
-
+    
     private LocalDateTime timestamp;
     private int status;
     private String error;

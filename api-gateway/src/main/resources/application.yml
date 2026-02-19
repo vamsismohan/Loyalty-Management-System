@@ -1,14 +1,18 @@
 server:
-  port: 8082
+  port: 8081
 
 spring:
   cloud:
     gateway:
       routes:
         - id: auth-service
-          uri: http://auth-service:8081
+          uri: http://auth-service:8082
           predicates:
             - Path=/auth/**
+        - id: customer-service
+          uri: http://customer-service:8083
+          predicates:
+            - Path=/customers/**
   security:
     oauth2:
       resourceserver:

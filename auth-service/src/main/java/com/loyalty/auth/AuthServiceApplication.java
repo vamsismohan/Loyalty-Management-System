@@ -11,7 +11,6 @@ public class AuthServiceApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(AuthServiceApplication.class, args);
-		System.out.println("JVM Timezone: " + TimeZone.getDefault());
 		System.out.println(new BCryptPasswordEncoder().encode("admin123"));
 	}
 

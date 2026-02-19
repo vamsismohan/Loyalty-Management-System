@@ -1,0 +1,16 @@
+server:
+  port: 8082
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: auth-service
+          uri: http://auth-service:8081
+          predicates:
+            - Path=/auth/**
+  security:
+    oauth2:
+      resourceserver:
+        jwt: 
+          secret-key: ${JWT_SECRET}

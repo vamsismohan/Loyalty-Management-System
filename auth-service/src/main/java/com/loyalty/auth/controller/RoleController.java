@@ -12,6 +12,7 @@ import com.loyalty.auth.dto.RoleRequest;
 import com.loyalty.auth.entity.Role;
 import com.loyalty.auth.service.RoleService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -22,7 +23,7 @@ public class RoleController {
     private final RoleService roleService;
 
     @PostMapping
-    public Role createRole(@RequestBody RoleRequest request) {
+    public Role createRole(@Valid @RequestBody RoleRequest request) {
         return roleService.createRole(request.getRoleName());
     }
 

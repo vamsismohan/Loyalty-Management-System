@@ -9,6 +9,7 @@ import com.loyalty.auth.dto.CreateUserRequest;
 import com.loyalty.auth.entity.User;
 import com.loyalty.auth.service.UserService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -19,7 +20,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public User createUser(@RequestBody CreateUserRequest request) {
+    public User createUser(@Valid @RequestBody CreateUserRequest request) {
         return userService.createUser(request);
     }
 }

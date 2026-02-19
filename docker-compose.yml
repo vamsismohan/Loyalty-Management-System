@@ -14,6 +14,8 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./db-init:/docker-entrypoint-initdb.d
+    networks:
+    - lms-network
 
   redis:
     image: redis:7
@@ -21,6 +23,8 @@ services:
     restart: always
     ports:
       - "6379:6379"
+    networks:
+    - lms-network
 
   auth-service:
     build:
@@ -29,8 +33,27 @@ services:
     depends_on:
       - postgres
       - redis
+    environment:
+      - JWT_SECRET=mysupersecurejwtsecretkeyforlms2026project
+    networks:
+      - lms-network
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+    container_name: api-gateway
     ports:
-      - "8081:8081"
+      - "8082:8082"
+    environment:
+      - JWT_SECRET=mysupersecurejwtsecretkeyforlms2026project
+    depends_on:
+      - auth-service
+    networks:
+      - lms-network
+
+networks:
+  lms-network:
+    driver: bridge
 
 volumes:
   postgres_data:

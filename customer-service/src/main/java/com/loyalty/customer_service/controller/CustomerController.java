@@ -1,6 +1,7 @@
 package com.loyalty.customer_service.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,6 +44,14 @@ public class CustomerController {
             @RequestBody CustomerRequest request) {
 
         return ResponseEntity.ok(service.updateCustomer(customerNumber, request));
+    }
+
+    @DeleteMapping("/{customerNumber}")
+    public ResponseEntity<Void> deleteCustomer(
+            @PathVariable String customerNumber) {
+
+        service.deleteCustomer(customerNumber);
+        return ResponseEntity.noContent().build();
     }
 
 }

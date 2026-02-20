@@ -12,7 +12,9 @@ import com.loyalty.customer_service.dto.CustomerResponse;
 import com.loyalty.customer_service.entity.Customer;
 import com.loyalty.customer_service.entity.CustomerAddress;
 import com.loyalty.customer_service.exception.CustomerAlreadyExistsException;
+import com.loyalty.customer_service.exception.CustomerBlockedException;
 import com.loyalty.customer_service.exception.CustomerNotFoundException;
+import com.loyalty.customer_service.exception.ResourceNotFoundException;
 import com.loyalty.customer_service.repository.CustomerRepository;
 
 @Service
@@ -29,7 +31,13 @@ public class CustomerServiceImpl implements CustomerService {
 
         Optional<Customer> existing = repository.findByEmail(request.getEmail());
         if (existing.isPresent()) {
-            throw new CustomerAlreadyExistsException(request.getEmail());
+            if (existing.get().getStatus().equals("ACTIVE")) {
+                throw new CustomerAlreadyExistsException(request.getEmail());
+            } else if (existing.get().getStatus().equals("INACTIVE")) {
+                updateCustomer(existing.get().getCustomerNumber(), request);
+            } else if (existing.get().getStatus().equals("BLOCKED")) {
+                throw new CustomerBlockedException("Customer account is blocked. Please contact support.");
+            }
         }
 
         Customer customer = new Customer();
@@ -60,8 +68,18 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerResponse updateCustomer(String customerNumber,
             CustomerRequest request) {
 
-        Customer customer = repository.findById(customerNumber)
-                .orElseThrow(() -> new CustomerNotFoundException(customerNumber));
+        Optional<Customer> optional = repository.findById(customerNumber);
+
+        if (optional.isEmpty()) {
+            throw new CustomerNotFoundException(customerNumber);
+        }
+
+        Customer customer = optional.get();
+
+        if (customer.getStatus().equals("BLOCKED")) {
+            throw new CustomerBlockedException("Customer account is blocked. Please contact support.");
+        }
+        
 
         customer.setFirstName(request.getFirstName());
         customer.setLastName(request.getLastName());
@@ -103,5 +121,16 @@ public class CustomerServiceImpl implements CustomerService {
     private String generateCustomerNumber() {
         return "CUST-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
     }
+
+    public void deleteCustomer(String customerNumber) {
+
+        Customer customer = repository.findById(customerNumber)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Customer not found"));
+
+        customer.setStatus("INACTIVE");
+        repository.save(customer);
+    }
+
 
 }

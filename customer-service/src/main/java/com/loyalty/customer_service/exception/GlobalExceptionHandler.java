@@ -24,6 +24,16 @@ public class GlobalExceptionHandler {
         return buildError(HttpStatus.CONFLICT, ex, request);
     }
 
+    @ExceptionHandler(CustomerBlockedException.class)
+    public ResponseEntity<ErrorResponse> customerBlocked(CustomerBlockedException ex, HttpServletRequest request) {
+        return buildError(HttpStatus.FORBIDDEN, ex, request);
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> customerResourceNotFound(ResourceNotFoundException ex, HttpServletRequest request) {
+        return buildError(HttpStatus.CONFLICT, ex, request);
+    }
+
     private ResponseEntity<ErrorResponse> buildError(
             HttpStatus status,
             Exception ex,

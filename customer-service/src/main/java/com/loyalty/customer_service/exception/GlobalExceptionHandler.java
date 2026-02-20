@@ -16,7 +16,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(CustomerNotFoundException.class)
     public ResponseEntity<ErrorResponse> customerNotExist(CustomerNotFoundException ex, HttpServletRequest request) {
-        return buildError(HttpStatus.CONFLICT, ex, request);
+        return buildError(HttpStatus.NOT_FOUND, ex, request);
     }
 
     @ExceptionHandler(CustomerAlreadyExistsException.class)

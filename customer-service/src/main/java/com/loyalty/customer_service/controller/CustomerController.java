@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.loyalty.customer_service.dto.CustomerDto;
 import com.loyalty.customer_service.dto.CustomerRequest;
 import com.loyalty.customer_service.dto.CustomerResponse;
 import com.loyalty.customer_service.service.CustomerService;
@@ -52,6 +53,11 @@ public class CustomerController {
 
         service.deleteCustomer(customerNumber);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/email/{email}")
+    public ResponseEntity<CustomerDto> getByEmail(@PathVariable String email) {
+        return ResponseEntity.ok(service.getByEmail(email));
     }
 
 }

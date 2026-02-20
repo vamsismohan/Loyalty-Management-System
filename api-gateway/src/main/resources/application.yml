@@ -9,10 +9,17 @@ spring:
           uri: http://auth-service:8082
           predicates:
             - Path=/auth/**
+
         - id: customer-service
           uri: http://customer-service:8083
           predicates:
             - Path=/customers/**
+
+        - id: member-service
+          uri: http://member-service:8084
+          predicates:
+            - Path=/members/**
+            
   security:
     oauth2:
       resourceserver:

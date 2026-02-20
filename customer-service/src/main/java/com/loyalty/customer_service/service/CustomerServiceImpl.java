@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 import com.loyalty.customer_service.dto.AddressRequest;
+import com.loyalty.customer_service.dto.CustomerDto;
 import com.loyalty.customer_service.dto.CustomerRequest;
 import com.loyalty.customer_service.dto.CustomerResponse;
 import com.loyalty.customer_service.entity.Customer;
@@ -26,16 +27,20 @@ public class CustomerServiceImpl implements CustomerService {
         this.repository = customerRepository;
     }
 
+    private static final String ACTIVE = "ACTIVE";
+    private static final String BLOCKED = "BLOCKED";
+    private static final String INACTIVE = "INACTIVE";
+
     @Override
     public CustomerResponse createCustomer(CustomerRequest request) {
 
         Optional<Customer> existing = repository.findByEmail(request.getEmail());
         if (existing.isPresent()) {
-            if (existing.get().getStatus().equals("ACTIVE")) {
+            if (existing.get().getStatus().equals(ACTIVE)) {
                 throw new CustomerAlreadyExistsException(request.getEmail());
-            } else if (existing.get().getStatus().equals("INACTIVE")) {
+            } else if (existing.get().getStatus().equals(INACTIVE)) {
                 updateCustomer(existing.get().getCustomerNumber(), request);
-            } else if (existing.get().getStatus().equals("BLOCKED")) {
+            } else if (existing.get().getStatus().equals(BLOCKED)) {
                 throw new CustomerBlockedException("Customer account is blocked. Please contact support.");
             }
         }
@@ -48,7 +53,7 @@ public class CustomerServiceImpl implements CustomerService {
         customer.setPhone(request.getPhone());
         customer.setDob(request.getDob());
         customer.setCountry(request.getCountry());
-        customer.setStatus("ACTIVE");
+        customer.setStatus(ACTIVE);
         customer.setCreatedAt(LocalDateTime.now());
 
         repository.save(customer);
@@ -76,15 +81,15 @@ public class CustomerServiceImpl implements CustomerService {
 
         Customer customer = optional.get();
 
-        if (customer.getStatus().equals("BLOCKED")) {
+        if (customer.getStatus().equals(BLOCKED)) {
             throw new CustomerBlockedException("Customer account is blocked. Please contact support.");
         }
-        
 
         customer.setFirstName(request.getFirstName());
         customer.setLastName(request.getLastName());
         customer.setPhone(request.getPhone());
         customer.setCountry(request.getCountry());
+        customer.setStatus(ACTIVE);
 
         // Update addresses
         customer.getAddresses().clear();
@@ -98,7 +103,6 @@ public class CustomerServiceImpl implements CustomerService {
                 address.setPostalCode(addrReq.getPostalCode());
                 address.setCreatedAt(LocalDateTime.now());
                 address.setCustomer(customer);
-
                 customer.getAddresses().add(address);
             }
         }
@@ -128,9 +132,25 @@ public class CustomerServiceImpl implements CustomerService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Customer not found"));
 
-        customer.setStatus("INACTIVE");
+        customer.setStatus(INACTIVE);
         repository.save(customer);
     }
 
+    @Override
+    public CustomerDto getByEmail(String email) {
+
+        Customer customer = repository.findByEmail(email)
+                .orElseThrow(() -> new CustomerNotFoundException("customerNotFound"));
+
+        if (BLOCKED.equals(customer.getStatus())) {
+            throw new CustomerBlockedException("Customer account is blocked. Please contact support.");
+        }
+        CustomerDto cusDto = new CustomerDto();
+        cusDto.setCustomerNumber(customer.getCustomerNumber());
+        cusDto.setEmail(customer.getEmail());
+        cusDto.setStatus(customer.getStatus());
+
+        return cusDto;
+    }
 
 }

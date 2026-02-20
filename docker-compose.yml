@@ -14,8 +14,13 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./db-init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     networks:
-    - lms-network
+      - lms-network
 
   redis:
     image: redis:7
@@ -24,32 +29,18 @@ services:
     ports:
       - "6379:6379"
     networks:
-    - lms-network
-
-  auth-service:
-    build:
-      context: ./auth-service
-    container_name: auth-service
-    depends_on:
-      - postgres
-      - redis
-    environment:
-      - JWT_SECRET=mysupersecurejwtsecretkeyforlms2026project
-    networks:
       - lms-network
 
-  api-gateway:
-    build:
-      context: ./api-gateway
-    container_name: api-gateway
-    ports:
-      - "8081:8081"
+  auth-service:
+    build: ./auth-service
+    container_name: auth-service
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
     environment:
       - JWT_SECRET=mysupersecurejwtsecretkeyforlms2026project
-    depends_on:
-      - auth-service
-      - customer-service
-      - redis
     networks:
       - lms-network
 
@@ -57,7 +48,34 @@ services:
     build: ./customer-service
     container_name: customer-service
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+    networks:
+      - lms-network
+
+  member-service:
+    build: ./member-service
+    container_name: member-service
+    depends_on:
+      postgres:
+        condition: service_healthy
+      customer-service:
+        condition: service_started
+    networks:
+      - lms-network
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8081:8081"
+    depends_on:
+      - auth-service
+      - customer-service
+      - member-service
+      - redis
+    environment:
+      - JWT_SECRET=mysupersecurejwtsecretkeyforlms2026project
     networks:
       - lms-network
 

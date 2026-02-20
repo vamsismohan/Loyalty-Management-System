@@ -1,0 +1,32 @@
+server:
+  port: 8084
+
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/member_db
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+
+customer:
+  service:
+    url: http://customer-service:8083
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      customerService:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+  timelimiter:
+    instances:
+      customerService:
+        timeoutDuration: 3s
+
+logging:
+  level:
+    io.github.resilience4j.circuitbreaker: DEBUG

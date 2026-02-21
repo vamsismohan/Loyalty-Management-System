@@ -10,7 +10,7 @@ CREATE TABLE member (
 );
 
 CREATE TABLE point_master (
-    point_type BIGSERIAL PRIMARY KEY,
+    point_type VARCHAR(20) PRIMARY KEY,
     is_tier_qualifying BOOLEAN DEFAULT FALSE,
     expiry_months INT,
     max_limit BIGINT
@@ -18,7 +18,7 @@ CREATE TABLE point_master (
 
 CREATE TABLE member_points_balance (
     membership_number VARCHAR(20) NOT NULL,
-    point_type    BIGINT NOT NULL,
+    point_type        VARCHAR(20) NOT NULL,
     balance           BIGINT NOT NULL DEFAULT 0,
 
     PRIMARY KEY (membership_number, point_type),
@@ -35,8 +35,8 @@ CREATE TABLE member_points_balance (
 CREATE TABLE points_ledger (
     ledger_id         BIGSERIAL PRIMARY KEY,
     membership_number VARCHAR(20) NOT NULL,
-    point_type     BIGINT NOT NULL,
-    transaction_type  VARCHAR(20) NOT NULL, -- ACCRUAL / REDEMPTION / ADJUSTMENT
+    point_type        VARCHAR(20) NOT NULL,
+    transaction_type  VARCHAR(20) NOT NULL,
     points            BIGINT NOT NULL,
     reference_id      VARCHAR(50),
     created_at        TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

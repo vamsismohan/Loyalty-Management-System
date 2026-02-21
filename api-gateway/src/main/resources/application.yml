@@ -5,6 +5,31 @@ spring:
   cloud:
     gateway:
       routes:
+
+        # Swagger specific rewrites FIRST
+        - id: customer-swagger
+          uri: http://customer-service:8083
+          predicates:
+            - Path=/customers/v3/api-docs
+          filters:
+            - RewritePath=/customers/v3/api-docs, /v3/api-docs
+
+        - id: member-swagger
+          uri: http://member-service:8084
+          predicates:
+            - Path=/members/v3/api-docs
+          filters:
+            - RewritePath=/members/v3/api-docs, /v3/api-docs
+
+        - id: partner-swagger
+          uri: http://partner-service:8085
+          predicates:
+            - Path=/partners/v3/api-docs
+          filters:
+            - RewritePath=/partners/v3/api-docs, /v3/api-docs
+
+
+        # Normal service routes AFTER
         - id: auth-service
           uri: http://auth-service:8082
           predicates:
@@ -24,9 +49,19 @@ spring:
           uri: http://partner-service:8085
           predicates:
             - Path=/partners/**
-            
+
   security:
     oauth2:
       resourceserver:
-        jwt: 
+        jwt:
           secret-key: ${JWT_SECRET}
+
+springdoc:
+  swagger-ui:
+    urls:
+      - name: customer-swagger
+        url: /customers/v3/api-docs
+      - name: member-swagger
+        url: /members/v3/api-docs
+      - name: partner-swagger
+        url: /partners/v3/api-docs

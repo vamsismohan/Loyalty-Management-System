@@ -10,7 +10,7 @@ import com.loyalty.partner_service.entity.PartnerAccrualRule;
 @Repository
 public interface PartnerAccrualRuleRepository extends JpaRepository<PartnerAccrualRule, String>{
 
-    Optional<PartnerAccrualRule> findByPartner_PartnerAndPointTypeAndUnitTypeAndActiveTrue(String partner, String pointType,
+    Optional<PartnerAccrualRule> findByPartnerMaster_PartnerAndPointTypeAndUnitTypeAndActiveTrue(String partner, String pointType,
             String unitType);
 
 }

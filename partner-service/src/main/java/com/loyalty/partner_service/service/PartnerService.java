@@ -89,7 +89,7 @@ public class PartnerService {
             String pointType,
             String unitType) {
 
-        Optional<PartnerAccrualRule> rule = accrualRepository.findByPartner_PartnerAndPointTypeAndUnitTypeAndActiveTrue(
+        Optional<PartnerAccrualRule> rule = accrualRepository.findByPartnerMaster_PartnerAndPointTypeAndUnitTypeAndActiveTrue(
                 partner, pointType, unitType);
 
         if (rule.isPresent()) {
@@ -140,7 +140,7 @@ public class PartnerService {
             String rewardType) {
 
         Optional<PartnerRedemptionRule> rule = redemptionRepository
-                .findByPartner_PartnerAndPointTypeAndRewardTypeAndActiveTrue(
+                .findByPartnerMaster_PartnerAndPointTypeAndRewardTypeAndActiveTrue(
                         partner,
                         pointType,
                         rewardType);

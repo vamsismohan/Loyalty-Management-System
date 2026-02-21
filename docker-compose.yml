@@ -50,6 +50,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    ports:
+      - "8083:8083"
     networks:
       - lms-network
 
@@ -70,6 +72,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    ports:
+      - "8085:8085"
     networks:
       - lms-network
 

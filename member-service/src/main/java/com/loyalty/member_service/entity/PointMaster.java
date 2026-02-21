@@ -18,9 +18,8 @@ import lombok.Setter;
 public class PointMaster {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "point_type")
-    private Long pointType;
+    @Column(name = "point_type", length = 20)
+    private String pointType;
 
     @Column(name = "is_tier_qualifying")
     private Boolean isTierQualifying;

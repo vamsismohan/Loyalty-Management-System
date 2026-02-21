@@ -22,5 +22,5 @@ public class MemberPointsBalanceId implements Serializable {
     private String membershipNumber;
 
     @Column(name = "point_type")
-    private Long pointTypeName;
+    private String pointType;
 }

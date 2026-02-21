@@ -19,6 +19,11 @@ spring:
           uri: http://member-service:8084
           predicates:
             - Path=/members/**
+
+        - id: partner-service
+          uri: http://partner-service:8085
+          predicates:
+            - Path=/partners/**
             
   security:
     oauth2:

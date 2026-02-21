@@ -18,6 +18,9 @@ import com.loyalty.customer_service.exception.CustomerNotFoundException;
 import com.loyalty.customer_service.exception.ResourceNotFoundException;
 import com.loyalty.customer_service.repository.CustomerRepository;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class CustomerServiceImpl implements CustomerService {
 
@@ -139,6 +142,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerDto getByEmail(String email) {
 
+        log.info("Member Enrollment check using email: {}", email);
         Customer customer = repository.findByEmail(email)
                 .orElseThrow(() -> new CustomerNotFoundException("customerNotFound"));
 

@@ -28,9 +28,9 @@ public class MemberPointsBalance {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("pointTypeId")
-    @JoinColumn(name = "point_type_id", nullable = false)
-    private PointType pointType;
+    @MapsId("pointType")
+    @JoinColumn(name = "point_type", nullable = false)
+    private PointMaster pointMaster;
 
     @Column(name = "balance", nullable = false)
     private Long balance;

@@ -64,6 +64,15 @@ services:
     networks:
       - lms-network
 
+  partner-service:
+    build: ./partner-service
+    container_name: partner-service
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - lms-network
+
   api-gateway:
     build: ./api-gateway
     container_name: api-gateway
@@ -74,6 +83,7 @@ services:
       - customer-service
       - member-service
       - redis
+      - partner-service
     environment:
       - JWT_SECRET=mysupersecurejwtsecretkeyforlms2026project
     networks:

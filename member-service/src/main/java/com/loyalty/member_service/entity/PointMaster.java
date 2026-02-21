@@ -11,19 +11,16 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "point_type")
+@Table(name = "point_master")
 @Getter
 @Setter
 @NoArgsConstructor
-public class PointType {
+public class PointMaster {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "point_type_id")
-    private Long pointTypeId;
-
-    @Column(name = "point_type_name", nullable = false, length = 50)
-    private String pointTypeName;
+    @Column(name = "point_type")
+    private Long pointType;
 
     @Column(name = "is_tier_qualifying")
     private Boolean isTierQualifying;

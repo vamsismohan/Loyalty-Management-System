@@ -33,8 +33,8 @@ public class PointsLedger {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "point_type_id", nullable = false)
-    private PointType pointType;
+    @JoinColumn(name = "point_type", nullable = false)
+    private PointMaster pointMaster;
 
     @Column(name = "transaction_type", nullable = false, length = 20)
     private String transactionType;

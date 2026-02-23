@@ -1,0 +1,97 @@
+                                 Apache License
+                           Version 2.0, January 2004
+                        http://www.apache.org/licenses/
+
+Copyright 2026 Vamsi Mohan Sala
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this project except in compliance with the License.
+You may obtain a copy of the License at:
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+---------------------------------------------------------------------
+
+PROJECT: Loyalty Management System
+Author: Vamsi Mohan
+Architecture: Cloud-Native Java Microservices
+
+Technology Stack:
+- Java 17+
+- Spring Boot
+- Spring Security (JWT)
+- Spring Cloud Gateway
+- Kafka (Event-Driven Architecture)
+- Redis (Caching Layer)
+- PostgreSQL (Database-per-Service)
+- Docker & Docker Compose
+- Feign Client + Resilience4j
+- RESTful APIs (OpenAPI compliant)
+
+---------------------------------------------------------------------
+
+This project demonstrates a production-grade airline loyalty
+management system including:
+
+- API Gateway
+- Authentication Service
+- Customer Service
+- Member Service (Single Source of Truth for Points)
+- Partner Service
+- Accrual Service
+- Redemption Service
+- Notification Service
+
+The system follows:
+
+- Database-per-service architecture
+- Event-driven consistency using Kafka
+- Immutable ledger design
+- Derived balance model
+- Tier computation model
+- Strict service ownership boundaries
+
+---------------------------------------------------------------------
+
+TERMS:
+
+You are free to:
+
+✔ Use
+✔ Modify
+✔ Distribute
+✔ Fork
+✔ Create derivative works
+
+Under the following conditions:
+
+1. You must include this license file in all copies.
+2. You must provide attribution to the original author.
+3. You must clearly indicate changes made.
+4. You may not use the author's name to promote derived products
+   without explicit written permission.
+
+---------------------------------------------------------------------
+
+DISCLAIMER:
+
+This software is provided "AS IS", without warranty of any kind,
+express or implied, including but not limited to:
+
+- Merchantability
+- Fitness for a particular purpose
+- Non-infringement
+
+The author shall not be liable for any claim, damages,
+or other liability arising from use of this software.
+
+---------------------------------------------------------------------
+
+For commercial licensing or enterprise usage,
+contact the author directly.

@@ -61,13 +61,11 @@ public class EnrollmentService {
             return customerClient.getByEmail(request.getEmail());
         } catch (FeignException.NotFound ex) {
             return customerClient.createCustomer(request);
-        } catch (FeignException ex) {
-            throw new CustomerServerSideError(ex.getMessage());
         }
     }
 
     public CustomerDto customerFallback(CustomerRequest request, Throwable ex) {
-        log.error("Fallback triggered due to:", ex);
+        log.error("Fallback triggered due to:", ex.getMessage());
         throw new CustomerServiceUnavailableException(
                 "Customer Service temporarily unavailable. Please try again later."
         );

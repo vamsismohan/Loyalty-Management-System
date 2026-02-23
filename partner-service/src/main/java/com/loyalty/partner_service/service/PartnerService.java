@@ -1,6 +1,7 @@
 package com.loyalty.partner_service.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,19 +21,24 @@ import com.loyalty.partner_service.entity.PartnerAccrualRule;
 import com.loyalty.partner_service.entity.PartnerMaster;
 import com.loyalty.partner_service.entity.PartnerRedemptionRule;
 import com.loyalty.partner_service.exception.AccrualActivityRuleNotFoundException;
+import com.loyalty.partner_service.exception.MemberServerSideErrorException;
 import com.loyalty.partner_service.exception.PartnerAlreadyExistException;
 import com.loyalty.partner_service.exception.PartnerNotFoundException;
+import com.loyalty.partner_service.exception.PointTypeNotExistException;
 import com.loyalty.partner_service.exception.RedemptionActivityRuleNotFoundException;
 import com.loyalty.partner_service.repository.PartnerAccrualRuleRepository;
 import com.loyalty.partner_service.repository.PartnerMasterRepository;
 import com.loyalty.partner_service.repository.PartnerRedemptionRuleRepository;
 
+import feign.FeignException.FeignClientException;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.persistence.criteria.Join;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -41,6 +47,7 @@ public class PartnerService {
     private final PartnerMasterRepository partnerRepository;
     private final PartnerAccrualRuleRepository accrualRepository;
     private final PartnerRedemptionRuleRepository redemptionRepository;
+    private final PartnerFeignClient memberClient;
 
     /* CREATE PARTNER */
 
@@ -71,6 +78,12 @@ public class PartnerService {
         PartnerMaster partner = partnerRepository.findById(request.getPartner())
                 .orElseThrow(() -> new PartnerNotFoundException(request.getPartner()));
 
+        boolean active = pointTypeValidation(request.getPointType()); 
+
+        if (!active) {
+            throw new PointTypeNotExistException(request.getPointType());
+        }
+        
         PartnerAccrualRule rule = new PartnerAccrualRule();
         rule.setRuleId(generateRuleId());
         rule.setPartner(partner);
@@ -92,6 +105,16 @@ public class PartnerService {
     }
 
     /* GET ACTIVE ACCRUAL RULE */
+
+    @CircuitBreaker(name= "memberService", fallbackMethod = "pointTypeFallbackMathod")
+    public boolean pointTypeValidation(String pointType) {
+        return memberClient.getPoints(pointType);
+    }
+
+    public boolean pointTypeFallbackMathod(String pointType, Throwable ex) {
+        log.error("Member server side error:", ex.getMessage());
+        throw new MemberServerSideErrorException("Member Service is temporary unavailable, Please try again after some time");
+    }
 
     @Transactional(readOnly = true)
     public AccrualRuleResponseDTO getAccrualByRuleId(String ruleId) {
@@ -136,6 +159,12 @@ public class PartnerService {
 
         PartnerMaster partner = partnerRepository.findById(request.getPartner())
                 .orElseThrow(() -> new RuntimeException("Partner not found"));
+
+        boolean active = pointTypeValidation(request.getPointType()); 
+
+        if (!active) {
+            throw new PointTypeNotExistException(request.getPointType());
+        }
 
         PartnerRedemptionRule rule = new PartnerRedemptionRule();
         rule.setRuleId(generateRuleId());

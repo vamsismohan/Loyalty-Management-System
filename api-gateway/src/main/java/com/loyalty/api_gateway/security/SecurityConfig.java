@@ -27,8 +27,7 @@ public class SecurityConfig {
                 .pathMatchers(
                     "/auth/login",
                     "/swagger-ui.html",
-                    "/swagger-ui/**",
-                    
+                    "/swagger-ui/**",                   
                     "/v3/api-docs/**",
                     "/customers/v3/api-docs",
                     "/members/v3/api-docs",

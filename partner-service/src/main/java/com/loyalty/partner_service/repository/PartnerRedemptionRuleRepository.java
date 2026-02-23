@@ -1,13 +1,13 @@
 package com.loyalty.partner_service.repository;
 
-import java.util.Optional;
-
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.stereotype.Repository;
+
 import com.loyalty.partner_service.entity.PartnerRedemptionRule;
 
-public interface PartnerRedemptionRuleRepository extends JpaRepository<PartnerRedemptionRule, String>{
-
-    Optional<PartnerRedemptionRule> findByPartnerMaster_PartnerAndPointTypeAndRewardTypeAndActiveTrue(String partner,
-            String pointType, String rewardType);
+@Repository
+public interface PartnerRedemptionRuleRepository
+        extends JpaRepository<PartnerRedemptionRule, String>, JpaSpecificationExecutor<PartnerRedemptionRule> {
 
 }

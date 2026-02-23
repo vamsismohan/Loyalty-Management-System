@@ -26,7 +26,7 @@ public class PartnerAccrualRule {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "partner", nullable = false)
-    private PartnerMaster partnerMaster;
+    private PartnerMaster partner;
 
     @Column(name = "point_type", nullable = false, length = 50)
     private String pointType;

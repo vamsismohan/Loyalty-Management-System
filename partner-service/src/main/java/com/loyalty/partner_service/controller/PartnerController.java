@@ -3,6 +3,9 @@ package com.loyalty.partner_service.controller;
 import com.loyalty.partner_service.dto.*;
 import com.loyalty.partner_service.service.PartnerService;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,63 +14,67 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class PartnerController {
 
-    private final PartnerService partnerService;
+        private final PartnerService partnerService;
 
+        @PostMapping
+        public ResponseEntity<PartnerResponseDTO> createPartner(
+                        @RequestBody PartnerRequestDTO request) {
 
-    @PostMapping
-    public ResponseEntity<PartnerResponseDTO> createPartner(
-            @RequestBody PartnerRequestDTO request) {
+                return ResponseEntity.ok(
+                                partnerService.createPartner(request));
+        }
 
-        return ResponseEntity.ok(
-                partnerService.createPartner(request)
-        );
-    }
+        @PostMapping("/accrual-rules")
+        public ResponseEntity<AccrualRuleResponseDTO> createAccrualRule(
+                        @RequestBody AccrualRuleRequestDTO request) {
 
-    @PostMapping("/accrual-rules")
-    public ResponseEntity<AccrualRuleResponseDTO> createAccrualRule(
-            @RequestBody AccrualRuleRequestDTO request) {
+                return ResponseEntity.ok(
+                                partnerService.createAccrualRule(request));
+        }
 
-        return ResponseEntity.ok(
-                partnerService.createAccrualRule(request)
-        );
-    }
+        @GetMapping("/accrual-rules")
+        public Page<AccrualRuleResponseDTO> getAllAccrualRules(
+                        @RequestParam(required = false) String partner,
+                        @RequestParam(required = false) String pointType,
+                        @RequestParam(required = false) String unitType,
+                        @RequestParam(required = false) Boolean active,
+                        Pageable pageable) {
+                return partnerService.searchAccrualRules(partner, pointType, unitType, active, pageable);
+        }
 
-    @GetMapping("/accrual-rules")
-    public ResponseEntity<AccrualRuleResponseDTO> getAccrualRule(
-            @RequestParam String partner,
-            @RequestParam String pointType,
-            @RequestParam String unitType) {
+        @GetMapping("/accrual-rules/{ruleId}")
+        public AccrualRuleResponseDTO getAccrualRule(@PathVariable String ruleId) {
+                return partnerService.getAccrualByRuleId(ruleId);
+        }
 
-        return ResponseEntity.ok(
-                partnerService.getActiveAccrualRule(
-                        partner,
-                        pointType,
-                        unitType
-                )
-        );
-    }
+        @PostMapping("/redemption-rules")
+        public ResponseEntity<RedemptionRuleResponseDTO> createRedemptionRule(
+                        @RequestBody RedemptionRuleRequestDTO request) {
 
-    @PostMapping("/redemption-rules")
-    public ResponseEntity<RedemptionRuleResponseDTO> createRedemptionRule(
-            @RequestBody RedemptionRuleRequestDTO request) {
+                return ResponseEntity.ok(
+                                partnerService.createRedemptionRule(request));
+        }
 
-        return ResponseEntity.ok(
-                partnerService.createRedemptionRule(request)
-        );
-    }
+        @GetMapping("/redemption-rules")
+        public Page<RedemptionRuleResponseDTO> getAllRedemptionRules(
+                        @RequestParam(required = false) String partner,
+                        @RequestParam(required = false) String pointType,
+                        @RequestParam(required = false) String rewardType,
+                        @RequestParam(required = false) Boolean active,
+                        Pageable pageable) {
 
-    @GetMapping("/redemption-rules")
-    public ResponseEntity<RedemptionRuleResponseDTO> getRedemptionRule(
-            @RequestParam String partner,
-            @RequestParam String pointType,
-            @RequestParam String rewardType) {
+                return partnerService.searchRedemptionRules(
+                                partner,
+                                pointType,
+                                rewardType,
+                                active,
+                                pageable);
+        }
 
-        return ResponseEntity.ok(
-                partnerService.getRedemptionActivityRule(
-                        partner,
-                        pointType,
-                        rewardType
-                )
-        );
-    }
+        @GetMapping("/redemption-rules/{ruleId}")
+        public RedemptionRuleResponseDTO getRedemptionRule(
+                        @PathVariable String ruleId) {
+
+                return partnerService.getRedemptionByRuleId(ruleId);
+        }
 }

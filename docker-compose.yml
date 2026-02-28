@@ -37,8 +37,6 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      redis:
-        condition: service_started
     environment:
       - JWT_SECRET=mysupersecurejwtsecretkeyforlms2026project
     ports:
@@ -63,6 +61,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_started
       customer-service:
         condition: service_started
     ports:
@@ -73,9 +73,13 @@ services:
   partner-service:
     build: ./partner-service
     container_name: partner-service
-    depends_on:
+    depends_on: 
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_started
+      member-service:
+        condition: service_started
     ports:
       - "8085:8085"
     networks:
@@ -91,7 +95,7 @@ services:
       - customer-service
       - member-service
       - redis
-      - partner-service
+      - partner-service      
     environment:
       - JWT_SECRET=mysupersecurejwtsecretkeyforlms2026project
     networks:

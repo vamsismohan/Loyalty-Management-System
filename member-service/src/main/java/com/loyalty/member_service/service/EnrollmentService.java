@@ -2,7 +2,9 @@ package com.loyalty.member_service.service;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import com.loyalty.member_service.dto.CustomerDto;
@@ -14,6 +16,7 @@ import com.loyalty.member_service.exception.CustomerServiceUnavailableException;
 import com.loyalty.member_service.exception.MemberAlreadyExistsException;
 import com.loyalty.member_service.feign_client.CustomerClient;
 import com.loyalty.member_service.repository.MemberRepository;
+import com.loyalty.member_service.repository.PointMasterRepository;
 
 import feign.FeignException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
@@ -28,6 +31,7 @@ public class EnrollmentService {
 
     private final CustomerClient customerClient;
     private final MemberRepository memberRepository;
+    private final PointMasterRepository pointMasterRepository;
 
     @Transactional
     public MemberResponse enroll(CustomerRequest request) {
@@ -89,5 +93,9 @@ public class EnrollmentService {
 
     private String generateMembershipNumber() {
         return "MEM-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+    }
+
+    public boolean getPointType(String pointype) {
+        return pointMasterRepository.existsByPointType(pointype);
     }
 }

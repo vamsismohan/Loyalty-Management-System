@@ -2,6 +2,8 @@ package com.loyalty.member_service.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,5 +26,10 @@ public class MemberController {
     public ResponseEntity<MemberResponse> enroll(
             @RequestBody CustomerRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(enrollmentService.enroll(request));
+    }
+
+    @GetMapping("/pointType/{pointype}")
+    public ResponseEntity<Boolean> getPoints(@PathVariable String pointype) {
+        return ResponseEntity.ok(enrollmentService.getPointType(pointype));
     }
 }

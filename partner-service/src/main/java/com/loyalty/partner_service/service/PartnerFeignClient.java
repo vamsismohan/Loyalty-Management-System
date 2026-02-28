@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 )
 public interface PartnerFeignClient {
 
-    @GetMapping("/member/pointType/{pointype}")
+    @GetMapping("/members/pointType/{pointype}")
     boolean getPoints(@PathVariable String pointype); 
 
 }

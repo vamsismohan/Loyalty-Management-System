@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,6 +38,7 @@ import jakarta.persistence.criteria.Join;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
@@ -48,6 +50,9 @@ public class PartnerService {
     private final PartnerAccrualRuleRepository accrualRepository;
     private final PartnerRedemptionRuleRepository redemptionRepository;
     private final PartnerFeignClient memberClient;
+    private final StringRedisTemplate redisTemplate;
+
+    private static final long TTL = 10; // minutes
 
     /* CREATE PARTNER */
 
@@ -78,12 +83,21 @@ public class PartnerService {
         PartnerMaster partner = partnerRepository.findById(request.getPartner())
                 .orElseThrow(() -> new PartnerNotFoundException(request.getPartner()));
 
-        boolean active = pointTypeValidation(request.getPointType()); 
+        String pointType = request.getPointType();
 
-        if (!active) {
-            throw new PointTypeNotExistException(request.getPointType());
+        String cache = redisTemplate.opsForValue().get(pointType);
+        log.info("***point type***: {}",cache);
+        if (cache == null) {
+            if (!pointTypeValidation(pointType)) {
+                throw new PointTypeNotExistException(pointType);
+            }
+            redisTemplate.opsForValue().set(
+                    pointType,
+                    pointType,
+                    TTL,
+                    TimeUnit.MINUTES);
         }
-        
+
         PartnerAccrualRule rule = new PartnerAccrualRule();
         rule.setRuleId(generateRuleId());
         rule.setPartner(partner);
@@ -106,14 +120,15 @@ public class PartnerService {
 
     /* GET ACTIVE ACCRUAL RULE */
 
-    @CircuitBreaker(name= "memberService", fallbackMethod = "pointTypeFallbackMathod")
+    @CircuitBreaker(name = "memberService", fallbackMethod = "pointTypeFallbackMathod")
     public boolean pointTypeValidation(String pointType) {
         return memberClient.getPoints(pointType);
     }
 
     public boolean pointTypeFallbackMathod(String pointType, Throwable ex) {
         log.error("Member server side error:", ex.getMessage());
-        throw new MemberServerSideErrorException("Member Service is temporary unavailable, Please try again after some time");
+        throw new MemberServerSideErrorException(
+                "Member Service is temporary unavailable, Please try again after some time");
     }
 
     @Transactional(readOnly = true)
@@ -160,7 +175,7 @@ public class PartnerService {
         PartnerMaster partner = partnerRepository.findById(request.getPartner())
                 .orElseThrow(() -> new RuntimeException("Partner not found"));
 
-        boolean active = pointTypeValidation(request.getPointType()); 
+        boolean active = pointTypeValidation(request.getPointType());
 
         if (!active) {
             throw new PointTypeNotExistException(request.getPointType());

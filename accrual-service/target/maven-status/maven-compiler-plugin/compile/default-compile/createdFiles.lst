@@ -1,0 +1,11 @@
+com\loyalty\accrual_service\config\KafkaConfig.class
+com\loyalty\accrual_service\dto\AccrualResponseDTO.class
+com\loyalty\accrual_service\controller\AccrualController.class
+com\loyalty\accrual_service\feign\PartnerClient.class
+com\loyalty\accrual_service\dto\PointsAccruedEvent.class
+com\loyalty\accrual_service\dto\AccrualRequestDTO.class
+com\loyalty\accrual_service\entity\AccrualTransaction.class
+com\loyalty\accrual_service\service\AccrualService.class
+com\loyalty\accrual_service\feign\dto\PartnerAccrualRuleDTO.class
+com\loyalty\accrual_service\repository\AccrualTransactionRepository.class
+com\loyalty\accrual_service\AccrualServiceApplication.class

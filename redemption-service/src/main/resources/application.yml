@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: redemption-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/redemptiondb
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+  kafka:
+    bootstrap-servers: localhost:9092
+  redis:
+    host: localhost
+    port: 6379
+
+server:
+  port: 8084

@@ -1,0 +1,11 @@
+d:\Loyalty-Management-System\redemption-service\src\main\java\com\loyalty\redemption_service\config\KafkaConfig.java
+d:\Loyalty-Management-System\redemption-service\src\main\java\com\loyalty\redemption_service\controller\RedemptionController.java
+d:\Loyalty-Management-System\redemption-service\src\main\java\com\loyalty\redemption_service\dto\PointsRedeemedEvent.java
+d:\Loyalty-Management-System\redemption-service\src\main\java\com\loyalty\redemption_service\dto\RedemptionRequestDTO.java
+d:\Loyalty-Management-System\redemption-service\src\main\java\com\loyalty\redemption_service\dto\RedemptionResponseDTO.java
+d:\Loyalty-Management-System\redemption-service\src\main\java\com\loyalty\redemption_service\entity\RedemptionTransaction.java
+d:\Loyalty-Management-System\redemption-service\src\main\java\com\loyalty\redemption_service\feign\dto\PartnerRedemptionRuleDTO.java
+d:\Loyalty-Management-System\redemption-service\src\main\java\com\loyalty\redemption_service\feign\PartnerClient.java
+d:\Loyalty-Management-System\redemption-service\src\main\java\com\loyalty\redemption_service\RedemptionServiceApplication.java
+d:\Loyalty-Management-System\redemption-service\src\main\java\com\loyalty\redemption_service\repository\RedemptionTransactionRepository.java
+d:\Loyalty-Management-System\redemption-service\src\main\java\com\loyalty\redemption_service\service\RedemptionService.java

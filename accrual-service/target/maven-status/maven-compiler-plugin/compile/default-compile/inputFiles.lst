@@ -1,0 +1,11 @@
+d:\Loyalty-Management-System\accrual-service\src\main\java\com\loyalty\accrual_service\AccrualServiceApplication.java
+d:\Loyalty-Management-System\accrual-service\src\main\java\com\loyalty\accrual_service\config\KafkaConfig.java
+d:\Loyalty-Management-System\accrual-service\src\main\java\com\loyalty\accrual_service\controller\AccrualController.java
+d:\Loyalty-Management-System\accrual-service\src\main\java\com\loyalty\accrual_service\dto\AccrualRequestDTO.java
+d:\Loyalty-Management-System\accrual-service\src\main\java\com\loyalty\accrual_service\dto\AccrualResponseDTO.java
+d:\Loyalty-Management-System\accrual-service\src\main\java\com\loyalty\accrual_service\dto\PointsAccruedEvent.java
+d:\Loyalty-Management-System\accrual-service\src\main\java\com\loyalty\accrual_service\entity\AccrualTransaction.java
+d:\Loyalty-Management-System\accrual-service\src\main\java\com\loyalty\accrual_service\feign\dto\PartnerAccrualRuleDTO.java
+d:\Loyalty-Management-System\accrual-service\src\main\java\com\loyalty\accrual_service\feign\PartnerClient.java
+d:\Loyalty-Management-System\accrual-service\src\main\java\com\loyalty\accrual_service\repository\AccrualTransactionRepository.java
+d:\Loyalty-Management-System\accrual-service\src\main\java\com\loyalty\accrual_service\service\AccrualService.java

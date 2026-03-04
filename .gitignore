@@ -1,0 +1,27 @@
+# Maven / Java
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# Eclipse, IntelliJ, VS Code
+.classpath
+.project
+.settings/
+.idea/
+*.iml
+.vscode/
+
+# Logs and temp files
+*.log
+*.tmp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# macOS
+.AppleDouble
+.LSOverride
+
+# Package distributions
+*.zip
+*.tar.gz

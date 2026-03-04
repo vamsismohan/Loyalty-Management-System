@@ -4,16 +4,22 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import com.loyalty.member_service.dto.CustomerDto;
 import com.loyalty.member_service.dto.CustomerRequest;
 import com.loyalty.member_service.dto.MemberResponse;
+import com.loyalty.member_service.dto.PointMasterRequestDTO;
+import com.loyalty.member_service.dto.PointMasterResponseDTO;
 import com.loyalty.member_service.entity.Member;
+import com.loyalty.member_service.entity.PointMaster;
 import com.loyalty.member_service.exception.CustomerServerSideError;
 import com.loyalty.member_service.exception.CustomerServiceUnavailableException;
 import com.loyalty.member_service.exception.MemberAlreadyExistsException;
+import com.loyalty.member_service.exception.PointTypeExistException;
+import com.loyalty.member_service.exception.PointTypeNotFoundException;
 import com.loyalty.member_service.feign_client.CustomerClient;
 import com.loyalty.member_service.repository.MemberRepository;
 import com.loyalty.member_service.repository.PointMasterRepository;
@@ -32,6 +38,9 @@ public class EnrollmentService {
     private final CustomerClient customerClient;
     private final MemberRepository memberRepository;
     private final PointMasterRepository pointMasterRepository;
+    private final StringRedisTemplate redisTemplate;
+
+    private static final long TTL = 10; // minutes
 
     @Transactional
     public MemberResponse enroll(CustomerRequest request) {
@@ -97,5 +106,66 @@ public class EnrollmentService {
 
     public boolean getPointType(String pointype) {
         return pointMasterRepository.existsByPointType(pointype);
+    }
+
+    public PointMasterResponseDTO createPoints(PointMasterRequestDTO pointDetails) {
+
+        if (pointMasterRepository.existsByPointType(pointDetails.getPointType())) {
+            throw new PointTypeExistException(pointDetails.getPointType());
+        }
+
+        PointMaster master = new PointMaster();
+        master.setPointType(pointDetails.getPointType());
+        master.setExpiryMonths(pointDetails.getExpiryMonths());
+        master.setIsTierQualifying(pointDetails.getIsTierQualifying());
+        master.setMaxLimit(pointDetails.getMaxLimit());
+        pointMasterRepository.save(master);
+
+        String pointType = master.getPointType();
+
+        redisTemplate.opsForValue().set(pointType, pointType, TTL, TimeUnit.MINUTES);
+
+        PointMasterResponseDTO pointMasterResponseDTO = new PointMasterResponseDTO();
+        pointMasterResponseDTO.setPointType(master.getPointType());
+        pointMasterResponseDTO.setExpiryMonths(master.getExpiryMonths());
+        pointMasterResponseDTO.setIsTierQualifying(master.getIsTierQualifying());
+        pointMasterResponseDTO.setMaxLimit(master.getMaxLimit());
+        return pointMasterResponseDTO;
+    }
+
+    public PointMasterResponseDTO updatePoints(PointMasterRequestDTO pointDetails) {
+
+        Optional<PointMaster> opt = pointMasterRepository.findById(pointDetails.getPointType());
+        if (opt.isEmpty()) {
+            throw new PointTypeNotFoundException(pointDetails.getPointType());
+        }
+
+        PointMaster master = opt.get();
+        master.setExpiryMonths(pointDetails.getExpiryMonths());
+        master.setIsTierQualifying(pointDetails.getIsTierQualifying());
+        master.setMaxLimit(pointDetails.getMaxLimit());
+
+        pointMasterRepository.save(master);
+
+        // refresh cache
+        redisTemplate.opsForValue().set(master.getPointType(), master.getPointType(), TTL, TimeUnit.MINUTES);
+
+        PointMasterResponseDTO resp = new PointMasterResponseDTO();
+        resp.setPointType(master.getPointType());
+        resp.setExpiryMonths(master.getExpiryMonths());
+        resp.setIsTierQualifying(master.getIsTierQualifying());
+        resp.setMaxLimit(master.getMaxLimit());
+        return resp;
+    }
+
+    public void deletePoints(String pointType) {
+        if (!pointMasterRepository.existsByPointType(pointType)) {
+            throw new PointTypeNotFoundException(pointType);
+        }
+
+        pointMasterRepository.deleteById(pointType);
+
+        // evict from cache
+        redisTemplate.delete(pointType);
     }
 }

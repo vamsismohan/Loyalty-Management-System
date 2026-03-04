@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.loyalty.member_service.dto.CustomerRequest;
 import com.loyalty.member_service.dto.MemberResponse;
+import com.loyalty.member_service.dto.PointMasterRequestDTO;
+import com.loyalty.member_service.dto.PointMasterResponseDTO;
 import com.loyalty.member_service.service.EnrollmentService;
 
 import lombok.RequiredArgsConstructor;
@@ -32,4 +34,10 @@ public class MemberController {
     public ResponseEntity<Boolean> getPoints(@PathVariable String pointype) {
         return ResponseEntity.ok(enrollmentService.getPointType(pointype));
     }
+
+    @PostMapping("/point")
+    public ResponseEntity<PointMasterResponseDTO> postMethodName(@RequestBody PointMasterRequestDTO pointDetails) { 
+        return ResponseEntity.ok().body(enrollmentService.createPoints(pointDetails));
+    }
+    
 }

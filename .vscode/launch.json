@@ -2,6 +2,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "MergeSort",
+            "request": "launch",
+            "mainClass": "com.loyalty.partner_service.service.MergeSort",
+            "projectName": "partner-service"
+        },
+        {
+            "type": "java",
             "name": "Spring Boot-AuthServiceApplication<auth-service>",
             "request": "launch",
             "cwd": "${workspaceFolder}",
